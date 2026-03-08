@@ -20,14 +20,24 @@ class _PackagesScreenState extends State<PackagesScreen> {
   }
 
   Future<void> _loadPackages() async {
+    debugPrint('PackagesScreen._loadPackages: loading installed packages');
     setState(() => _isLoading = true);
     final termux = context.read<TermuxService>();
-    final res = await termux.runCommand('pkg list-installed');
-    if (!mounted) return;
-    setState(() {
-      _packages = res.split('\n').where((p) => p.trim().isNotEmpty && !p.startsWith('Listing')).toList();
-      _isLoading = false;
-    });
+    try {
+      final res = await termux.runCommand('pkg list-installed');
+      if (!mounted) return;
+      setState(() {
+        _packages = res.split('\n').where((p) => p.trim().isNotEmpty && !p.startsWith('Listing')).toList();
+        _isLoading = false;
+      });
+      debugPrint('PackagesScreen._loadPackages: loaded ${_packages.length} packages');
+    } catch (e, stackTrace) {
+      debugPrint('PackagesScreen._loadPackages: error loading packages: $e, stackTrace: $stackTrace');
+      if (!mounted) return;
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   Future<void> _searchPackages(String query) async {
@@ -35,23 +45,54 @@ class _PackagesScreenState extends State<PackagesScreen> {
       _loadPackages();
       return;
     }
+    debugPrint('PackagesScreen._searchPackages: searching for query="$query"');
     setState(() => _isLoading = true);
     final termux = context.read<TermuxService>();
-    final res = await termux.runCommand('pkg search $query');
-    if (!mounted) return;
-    setState(() {
-      _packages = res.split('\n').where((p) => p.trim().isNotEmpty).toList();
-      _isLoading = false;
-    });
+    try {
+      final res = await termux.runCommand('pkg search $query');
+      if (!mounted) {
+        debugPrint('PackagesScreen._searchPackages: widget not mounted, skipping update');
+        return;
+      }
+      setState(() {
+        _packages = res.split('\n').where((p) => p.trim().isNotEmpty).toList();
+        _isLoading = false;
+      });
+      debugPrint('PackagesScreen._searchPackages: found ${_packages.length} packages for query="$query"');
+    } catch (e, stackTrace) {
+      debugPrint('PackagesScreen._searchPackages: error searching packages: $e, stackTrace: $stackTrace');
+      if (!mounted) {
+        debugPrint('PackagesScreen._searchPackages: widget not mounted after error, skipping update');
+        return;
+      }
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   Future<void> _managePackage(String pkg, String action) async {
+    debugPrint('PackagesScreen._managePackage: managing package $pkg with action $action');
     setState(() => _isLoading = true);
     final termux = context.read<TermuxService>();
-    final res = await termux.runCommand('pkg $action -y $pkg');
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(res.split('\n').last)));
-    _loadPackages();
+    try {
+      final res = await termux.runCommand('pkg $action -y $pkg');
+      if (!mounted) {
+        debugPrint('PackagesScreen._managePackage: widget not mounted, skipping snackbar');
+        return;
+      }
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(res.split('\n').last)));
+      _loadPackages();
+      debugPrint('PackagesScreen._managePackage: package $pkg managed successfully with action $action');
+    } catch (e, stackTrace) {
+      debugPrint('PackagesScreen._managePackage: error managing package $pkg: $e, stackTrace: $stackTrace');
+      if (!mounted) {
+        debugPrint('PackagesScreen._managePackage: widget not mounted after error, skipping snackbar');
+        return;
+      }
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Error managing package')));
+      setState(() => _isLoading = false);
+    }
   }
 
   @override

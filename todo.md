@@ -1,93 +1,32 @@
-# Termux Web Assistant - Project TODO
+# Termux Assistant - Project TODO
 
-## Architecture & Setup
-- [x] Project initialization with web-db-user scaffold
-- [x] Database schema design and implementation
-- [x] Backend API procedures (tRPC routers) setup
-- [ ] WebSocket integration for real-time terminal
-- [ ] Environment variables and secrets configuration
+## Базовая архитектура и настройка
+- [x] Инициализация Flutter проекта
+- [x] Настройка базовой навигации (BottomNavigationBar)
+- [x] Настройка State Management (Provider)
+- [x] Запрос разрешений (Storage/Files)
 
-## UI/UX & Design System
-- [x] Design system and color palette (elegant style)
-- [x] Main dashboard layout with navigation
-- [ ] Responsive design for mobile and tablet
-- [x] Dark/light theme support
-- [ ] Loading states and error handling
+## Интеграция с Termux (Core)
+- [x] Сервис выполнения разовых команд (`Process.run`)
+- [x] Интерактивный Shell (`Process.start` с потоками ввода-вывода)
+- [ ] Определение окружения Termux (PATH, ENV)
+- [ ] Обработка ошибок отсутствия Termux
 
-## Core Features
-- [x] Package Management Panel
-  - [x] Package search functionality
-  - [x] Install/update/remove operations
-  - [ ] Dependency information display (backend)
-  - [x] Package list and filtering
+## Пользовательский интерфейс (UI/UX)
+- [x] Основной каркас приложения
+- [x] Тёмная и светлая тема
 
-- [x] File Manager
-  - [x] Tree view navigation
-  - [ ] Termux filesystem access (backend)
-  - [ ] Device storage access (backend)
-  - [x] Create/edit/copy/delete UI
-  - [ ] File upload/download (backend)
-  - [x] Breadcrumb navigation
+## Функционал (Features)
+- [x] **Терминал:** Базовый ввод и вывод
+- [x] **Терминал:** Интерактивная сессия (Stream)
+- [ ] **Пакеты:** Парсинг списка установленных пакетов (`pkg list-installed`)
+- [ ] **Пакеты:** Установка и удаление пакетов
+- [ ] **Файлы:** Навигация по файловой системе
+- [ ] **Файлы:** Редактирование текстовых файлов
+- [ ] **Скрипты:** Сохранение и запуск .sh файлов
+- [ ] **Мониторинг:** Парсинг `/proc/meminfo` и `/proc/stat`
 
-- [ ] Web Terminal
-  - [ ] Terminal emulation (xterm.js or similar)
-  - [ ] Tab support
-  - [ ] Command history
-  - [ ] Auto-completion
-  - [ ] Real-time output via WebSockets
-  - [ ] Session persistence
-
-- [x] Script Editor & Scheduler
-  - [x] Script creation and editing UI
-  - [x] Support for Bash/Python/Node.js
-  - [x] Script execution UI
-  - [x] Cron-like scheduling UI
-  - [x] Execution history and logs display
-
-- [ ] Project Templates
-  - [ ] Python template
-  - [ ] Node.js template
-  - [ ] Go template
-  - [ ] Template deployment
-  - [ ] Dependency management
-
-- [ ] System Monitoring Dashboard
-  - [ ] Real-time CPU load display
-  - [ ] RAM usage visualization
-  - [ ] Battery status
-  - [ ] Network activity monitoring
-  - [ ] System metrics charts
-
-- [ ] Termux:API Integration
-  - [ ] SMS management
-  - [ ] GPS location access
-  - [ ] Camera integration
-  - [ ] Sensor data access
-  - [ ] Notification system
-
-- [ ] Git Repository Management
-  - [ ] Clone repositories
-  - [ ] Commit operations
-  - [ ] Push/pull operations
-  - [ ] Branch management
-  - [ ] Repository status display
-
-- [ ] Local Server & Database Management
-  - [ ] Server start/stop controls
-  - [ ] Process monitoring
-  - [ ] Database management UI
-  - [ ] Server logs display
-  - [ ] Port management
-
-## Testing & Quality
-- [ ] Unit tests for backend procedures
-- [ ] Component tests for UI
-- [ ] Integration tests for features
-- [ ] Performance optimization
-- [ ] Security review
-
-## Deployment
-- [ ] Create checkpoint for initial delivery
-- [ ] User testing and feedback
-- [ ] Bug fixes and refinements
-- [ ] Final deployment
+## Релиз и оптимизация
+- [ ] Подготовка иконки приложения
+- [ ] Сборка APK
+- [ ] Тестирование на реальном устройстве

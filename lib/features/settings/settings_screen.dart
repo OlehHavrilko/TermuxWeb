@@ -26,23 +26,46 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> _loadSettings() async {
-    final prefs = await SharedPreferences.getInstance();
-    if (!mounted) return;
-    setState(() {
-      _isDark = prefs.getBool('isDark') ?? true;
-      _fontSize = prefs.getDouble('fontSize') ?? 14.0;
-      _shellPath = prefs.getString('shellPath') ?? '/data/data/com.termux/files/usr/bin/bash';
-      _shellPathController.text = _shellPath;
-    });
+    debugPrint('SettingsScreen._loadSettings: loading settings');
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      if (!mounted) {
+        debugPrint('SettingsScreen._loadSettings: widget not mounted, skipping update');
+        return;
+      }
+      setState(() {
+        _isDark = prefs.getBool('isDark') ?? true;
+        _fontSize = prefs.getDouble('fontSize') ?? 14.0;
+        _shellPath = prefs.getString('shellPath') ?? '/data/data/com.termux/files/usr/bin/bash';
+        _shellPathController.text = _shellPath;
+      });
+      debugPrint('SettingsScreen._loadSettings: settings loaded successfully');
+    } catch (e, stackTrace) {
+      debugPrint('SettingsScreen._loadSettings: error loading settings: $e, stackTrace: $stackTrace');
+    }
   }
 
   Future<void> _saveSettings() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isDark', _isDark);
-    await prefs.setDouble('fontSize', _fontSize);
-    await prefs.setString('shellPath', _shellPath);
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Settings Saved')));
+    debugPrint('SettingsScreen._saveSettings: saving settings');
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('isDark', _isDark);
+      await prefs.setDouble('fontSize', _fontSize);
+      await prefs.setString('shellPath', _shellPath);
+      if (!mounted) {
+        debugPrint('SettingsScreen._saveSettings: widget not mounted, skipping snackbar');
+        return;
+      }
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Settings Saved')));
+      debugPrint('SettingsScreen._saveSettings: settings saved successfully');
+    } catch (e, stackTrace) {
+      debugPrint('SettingsScreen._saveSettings: error saving settings: $e, stackTrace: $stackTrace');
+      if (!mounted) {
+        debugPrint('SettingsScreen._saveSettings: widget not mounted after error, skipping snackbar');
+        return;
+      }
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Error saving settings')));
+    }
   }
 
   @override
