@@ -20,44 +20,76 @@ class _FilesScreenState extends State<FilesScreen> {
   }
 
   Future<void> _loadFiles() async {
+    debugPrint('FilesScreen._loadFiles: loading files from $_currentPath');
     setState(() => _isLoading = true);
     final termux = context.read<TermuxService>();
-    final res = await termux.runCommand('ls -la "$_currentPath"');
-    if (!mounted) return;
-    setState(() {
-      _files = res.split('\n').where((f) => f.trim().isNotEmpty && !f.startsWith('total')).toList();
-      _isLoading = false;
-    });
+    try {
+      final res = await termux.runCommand('ls -la "$_currentPath"');
+      if (!mounted) {
+        debugPrint('FilesScreen._loadFiles: widget not mounted, skipping update');
+        return;
+      }
+      setState(() {
+        _files = res.split('\n').where((f) => f.trim().isNotEmpty && !f.startsWith('total')).toList();
+        _isLoading = false;
+      });
+      debugPrint('FilesScreen._loadFiles: loaded ${_files.length} files from $_currentPath');
+    } catch (e, stackTrace) {
+      debugPrint('FilesScreen._loadFiles: error loading files: $e, stackTrace: $stackTrace');
+      if (!mounted) {
+        debugPrint('FilesScreen._loadFiles: widget not mounted after error, skipping update');
+        return;
+      }
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   Future<void> _createFile() async {
+    debugPrint('FilesScreen._createFile: creating new file/dir');
     String name = '';
-    await showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('New File/Dir'),
-        content: TextField(onChanged: (v) => name = v),
-        actions: [
-          TextButton(
-            child: const Text('Create'),
-            onPressed: () async {
-              Navigator.pop(context);
-              if (name.isNotEmpty) {
-                final termux = context.read<TermuxService>();
-                await termux.runCommand('touch "$_currentPath/$name"');
-                _loadFiles();
-              }
-            },
-          ),
-        ],
-      ),
-    );
+    try {
+      await showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('New File/Dir'),
+          content: TextField(onChanged: (v) => name = v),
+          actions: [
+            TextButton(
+              child: const Text('Create'),
+              onPressed: () async {
+                try {
+                  Navigator.pop(context);
+                  if (name.isNotEmpty) {
+                    final termux = context.read<TermuxService>();
+                    await termux.runCommand('touch "$_currentPath/$name"');
+                    _loadFiles();
+                    debugPrint('FilesScreen._createFile: file/dir $name created successfully');
+                  }
+                } catch (e, stackTrace) {
+                  debugPrint('FilesScreen._createFile: error creating file/dir $name: $e, stackTrace: $stackTrace');
+                }
+              },
+            ),
+          ],
+        ),
+      );
+    } catch (e, stackTrace) {
+      debugPrint('FilesScreen._createFile: error in dialog: $e, stackTrace: $stackTrace');
+    }
   }
 
   Future<void> _deleteFile(String name) async {
-    final termux = context.read<TermuxService>();
-    await termux.runCommand('rm -rf "$_currentPath/$name"');
-    _loadFiles();
+    debugPrint('FilesScreen._deleteFile: deleting file/dir $name');
+    try {
+      final termux = context.read<TermuxService>();
+      await termux.runCommand('rm -rf "$_currentPath/$name"');
+      _loadFiles();
+      debugPrint('FilesScreen._deleteFile: file/dir $name deleted successfully');
+    } catch (e, stackTrace) {
+      debugPrint('FilesScreen._deleteFile: error deleting file/dir $name: $e, stackTrace: $stackTrace');
+    }
   }
 
   @override
