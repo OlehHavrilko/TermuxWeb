@@ -240,7 +240,7 @@ class _FilesPageState extends State<FilesPage> {
                     onTap: () => _navigateToDirectory('/data/data/com.termux/files/home'),
                     child: const Text('root'),
                   ),
-                  ..._currentPath.split('/').where((p) => p.isNotEmpty).map((part) => [
+                  ..._currentPath.split('/').where((p) => p.isNotEmpty).expand((part) => [
                     const Icon(Icons.chevron_right, size: 16),
                     InkWell(
                       onTap: () {

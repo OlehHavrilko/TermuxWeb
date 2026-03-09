@@ -1,0 +1,1 @@
+ C:\\Users\\Oleh\\StudioProjects\\TermuxWeb-Asisstant-\\.dart_tool\\flutter_build\\0f73518d180b2a63b1a074510d3f9b15\\native_assets.json: 

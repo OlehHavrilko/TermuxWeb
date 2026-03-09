@@ -137,9 +137,9 @@ class _TerminalPageState extends State<TerminalPage> {
           IconButton(
             icon: const Icon(Icons.content_copy),
             onPressed: () {
-              Clipboard.setData(ClipboardData(text: _terminal.buffer.text));
+              // Clipboard.setData(ClipboardData(text: _terminal.getText()));
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Terminal output copied')),
+                const SnackBar(content: Text('Terminal copy not supported yet')),
               );
             },
             tooltip: 'Copy',
